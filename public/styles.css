@@ -1186,3 +1186,160 @@ noscript {
     animation: none;
   }
 }
+
+/* API login page */
+
+body:has(#authButton) {
+  display: grid;
+  grid-template-columns: minmax(0, 420px);
+  gap: 1.25rem;
+  place-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 2rem;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 20% 15%, rgb(124 92 229 / 18%), transparent
+    24rem),
+    radial-gradient(circle at 85% 85%, rgb(96 165 250 / 16%), transparent
+    26rem),
+    #f7f7fc;
+}
+
+body:has(#authButton) > h1,
+body:has(#authButton) > div {
+  position: relative;
+  z-index: 1;
+}
+
+body:has(#authButton) > h1 {
+  color: #20243a;
+  font-size: clamp(1.7rem, 5vw, 2.25rem);
+  letter-spacing: -0.05em;
+}
+
+body:has(#authButton) > h1::before,
+body:has(#authButton) > h1::after {
+  display: block;
+  letter-spacing: normal;
+}
+
+body:has(#authButton) > h1::before {
+  margin-bottom: 0.55rem;
+  color: #7657d8;
+  content: "DENO API HANDS-ON";
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+body:has(#authButton) > h1::after {
+  margin-top: 0.45rem;
+  color: #858ca0;
+  content: "パスワードを入力して続行してください";
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+body:has(#authButton) > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(224 226 238 / 85%);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow:
+    0 24px 70px rgb(45 50 82 / 12%),
+    inset 0 1px rgb(255 255 255 / 80%);
+  backdrop-filter: blur(18px);
+}
+
+#passwordInput {
+  min-width: 0;
+  height: 48px;
+  padding: 0 0.95rem;
+  border: 1px solid #dfe2eb;
+  border-radius: 11px;
+  outline: none;
+  background: #fafafe;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+#passwordInput::placeholder {
+  color: #a4a9b8;
+}
+
+#passwordInput:hover {
+  border-color: #c8c3df;
+}
+
+#passwordInput:focus {
+  border-color: #8468df;
+  background: white;
+  box-shadow: 0 0 0 4px rgb(124 92 229 / 12%);
+}
+
+#authButton {
+  min-width: 96px;
+  height: 48px;
+  padding-inline: 1.1rem;
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #8869e7, #6949cb);
+  box-shadow: 0 9px 20px rgb(103 72 203 / 24%);
+  transition:
+    box-shadow 150ms ease,
+    filter 150ms ease,
+    transform 150ms ease;
+}
+
+#authButton:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 12px 24px rgb(103 72 203 / 30%);
+  transform: translateY(-1px);
+}
+
+#authButton:active {
+  box-shadow: 0 5px 12px rgb(103 72 203 / 22%);
+  transform: translateY(1px);
+}
+
+#authResult {
+  grid-column: 1 / -1;
+  color: #5f4aab;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+#authResult:not(:empty) {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e0daf7;
+  border-radius: 9px;
+  background: #f5f2ff;
+}
+
+@media (max-width: 480px) {
+  body:has(#authButton) {
+    padding: 1.25rem;
+  }
+
+  body:has(#authButton) > div {
+    grid-template-columns: 1fr;
+    padding: 1.15rem;
+  }
+
+  #authButton {
+    width: 100%;
+  }
+
+  #authResult {
+    grid-column: 1;
+  }
+}
