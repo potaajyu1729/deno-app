@@ -3,14 +3,215 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <title>deno勉強会</title>
+    <meta name="theme-color" content="#171a2b">
+    <title>Doodle Desk | deno勉強会</title>
     <link rel="icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="./styles.css">
     <script type="module" src="./index.js"></script>
   </head>
   <body>
-    <!-- サーバーから返ってきた文字を表示する場所 -->
-    <h1 id="welcomeMessage"></h1>
-    <p>jigインターン3日目</p>
+    <div id="loadingScreen" class="loading-screen" role="status"
+      aria-live="polite">
+      <div class="loading-card">
+        <div id="welcomeMessage" aria-hidden="true"></div>
+        <p id="loadingText">キャンバスを準備しています</p>
+      </div>
+    </div>
+
+    <div id="paintApp" class="paint-app" data-active-tool="pen">
+      <aside class="sidebar" aria-label="描画ツールと設定">
+        <a class="brand" href="#canvasBoard"
+          aria-label="Doodle Deskのキャンバスへ移動">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M5 18.5 6.2 14 15 5.2a2.1 2.1 0 0 1 3 0l.8.8a2.1 2.1 0 0 1 0 3L10 17.8 5 18.5Z" />
+              <path d="m13.8 6.5 3.7 3.7" />
+            </svg>
+          </span>
+          <span>
+            <strong>Doodle Desk</strong>
+            <small>IDEA CANVAS</small>
+          </span>
+        </a>
+
+        <section class="tools-section" aria-labelledby="toolsHeading">
+          <div class="section-heading" id="toolsHeading">ツール</div>
+          <div id="toolBar" class="tool-list" role="toolbar"
+            aria-label="描画ツール" aria-orientation="vertical">
+            <button class="tool-button is-active" type="button" data-tool="pen"
+              aria-pressed="true" title="ペン (P)">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="m14.7 5.3 4 4M4 20l1.3-5.2L15.8 4.3a2.1 2.1 0 0 1 3 0l.9.9a2.1 2.1 0 0 1 0 3L10.2 18.7 5 20Z" />
+                </svg>
+              </span>
+              <span
+                class="tool-copy"><strong>ペン</strong><small>自由に描く</small></span>
+              <kbd>P</kbd>
+            </button>
+
+            <button class="tool-button" type="button" data-tool="eraser"
+              aria-pressed="false" title="消しゴム (E)">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="m19.4 13.5-6.8-6.9a2 2 0 0 0-2.8 0l-5.2 5.2a2 2 0 0 0 0 2.8L9 19h5.3l5.1-5.5Z" />
+                  <path d="m7.5 17 7.8-7.8M13.7 19H21" />
+                </svg>
+              </span>
+              <span
+                class="tool-copy"><strong>消しゴム</strong><small>線を消す</small></span>
+              <kbd>E</kbd>
+            </button>
+
+            <button class="tool-button" type="button" data-tool="highlighter"
+              aria-pressed="false" title="蛍光ペン (H)">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="m14 4 6 6-8.5 8.5-6-6Z" />
+                  <path d="m5.5 12.5-2 5 3 3 5-2M3 21h11" />
+                </svg>
+              </span>
+              <span
+                class="tool-copy"><strong>蛍光ペン</strong><small>半透明で強調</small></span>
+              <kbd>H</kbd>
+            </button>
+
+            <button class="tool-button" type="button" data-tool="note"
+              aria-pressed="false" title="付箋 (N)">
+              <span class="tool-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5v10.5L14 22H5A1.5 1.5 0 0 1 3.5 20V5A1.5 1.5 0 0 1 5 3.5Z" />
+                  <path d="M14 22v-5a1.5 1.5 0 0 1 1.5-1.5h5" />
+                </svg>
+              </span>
+              <span
+                class="tool-copy"><strong>付箋</strong><small>メモを貼る</small></span>
+              <kbd>N</kbd>
+            </button>
+          </div>
+        </section>
+
+        <section class="tool-options" aria-labelledby="optionsHeading">
+          <div class="section-heading" id="optionsHeading">ツール設定</div>
+
+          <div id="colorOptions" class="option-group">
+            <div class="option-label-row">
+              <label for="toolColor">カラー</label>
+              <input id="toolColor" class="color-input" type="color"
+                value="#172033" aria-label="ツールの色">
+            </div>
+            <div class="color-swatches" role="group"
+              aria-label="カラープリセット">
+              <button type="button" class="color-swatch is-selected"
+                data-color="#172033" style="--swatch: #172033"
+                aria-label="チャコール"></button>
+              <button type="button" class="color-swatch" data-color="#3b82f6"
+                style="--swatch: #3b82f6" aria-label="ブルー"></button>
+              <button type="button" class="color-swatch" data-color="#fb7185"
+                style="--swatch: #fb7185" aria-label="ピンク"></button>
+              <button type="button" class="color-swatch" data-color="#facc15"
+                style="--swatch: #facc15" aria-label="イエロー"></button>
+              <button type="button" class="color-swatch" data-color="#34d399"
+                style="--swatch: #34d399" aria-label="グリーン"></button>
+              <button type="button" class="color-swatch" data-color="#a78bfa"
+                style="--swatch: #a78bfa" aria-label="パープル"></button>
+            </div>
+          </div>
+
+          <div id="sizeOptions" class="option-group">
+            <div class="option-label-row">
+              <label for="brushSize">太さ</label>
+              <output id="sizeValue" for="brushSize">4 px</output>
+            </div>
+            <div class="size-control">
+              <input id="brushSize" type="range" min="2" max="48" step="1"
+                value="4" aria-label="線の太さ">
+              <span class="size-preview"
+                aria-hidden="true"><span id="sizePreview"></span></span>
+            </div>
+          </div>
+        </section>
+
+        <p id="toolHint" class="tool-hint">
+          <span aria-hidden="true">✦</span>
+          ドラッグして線を描きます
+        </p>
+      </aside>
+
+      <header class="topbar">
+        <div class="title-group">
+          <div class="eyebrow"><span></span> MY CREATIVE SPACE</div>
+          <h1>アイデアキャンバス</h1>
+        </div>
+
+        <div class="topbar-actions" aria-label="キャンバス操作">
+          <button id="undoButton" class="action-button" type="button" disabled
+            title="元に戻す (Ctrl/⌘ + Z)">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m9 8-5 4 5 4" />
+              <path d="M5 12h8a6 6 0 0 1 6 6" />
+            </svg>
+            <span class="action-label">戻す</span>
+          </button>
+          <button id="redoButton" class="action-button" type="button" disabled
+            title="やり直す (Ctrl/⌘ + Shift + Z)">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m15 8 5 4-5 4" />
+              <path d="M19 12h-8a6 6 0 0 0-6 6" />
+            </svg>
+            <span class="action-label">進む</span>
+          </button>
+          <span class="action-divider" aria-hidden="true"></span>
+          <button id="downloadButton"
+            class="action-button action-button--primary" type="button"
+            title="PNG画像として保存">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16" />
+            </svg>
+            <span class="action-label">保存</span>
+          </button>
+          <button id="clearButton" class="action-button action-button--danger"
+            type="button" disabled title="キャンバスをすべて消去">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path
+                d="M4 7h16M9 3h6l1 4H8l1-4ZM7 7l1 14h8l1-14M10 11v6M14 11v6" />
+            </svg>
+            <span class="action-label">全消去</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section id="canvasBoard" class="canvas-board"
+          aria-label="描画キャンバス" aria-describedby="toolStatus">
+          <canvas id="drawingCanvas"
+            aria-label="マウスやタッチで描画できるキャンバス">
+            このブラウザはCanvas描画に対応していません。
+          </canvas>
+          <div id="notesLayer" class="notes-layer"
+            aria-label="付箋レイヤー"></div>
+          <div id="brushCursor" class="brush-cursor" aria-hidden="true"></div>
+          <div class="canvas-corner-label"
+            aria-hidden="true">DOODLE DESK · 01</div>
+        </section>
+
+        <div class="canvas-status" aria-hidden="true">
+          <span
+            class="status-tool"><i id="statusToolDot"></i><strong id="statusToolName">ペン</strong></span>
+          <span class="status-divider"></span>
+          <span id="canvasSize">0 × 0 px</span>
+          <span class="status-spacer"></span>
+          <span id="itemCount">0 strokes · 0 notes</span>
+        </div>
+      </main>
+
+      <p id="toolStatus" class="sr-only" aria-live="polite">ペンを選択中です</p>
+    </div>
+
+    <noscript>このペイントアプリを使うにはJavaScriptを有効にしてください。</noscript>
   </body>
 </html>
