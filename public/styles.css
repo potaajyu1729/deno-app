@@ -12,3 +12,58 @@ body {
   display: grid;
   place-content: center;
 }
+
+#welcomeMessage:empty {
+  position: relative;
+  width: 4.5rem;
+  height: 2rem;
+  margin-inline: auto;
+}
+
+#welcomeMessage:empty::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    radial-gradient(circle, #60a5fa 45%, transparent 50%) calc(50% - 1.35rem) 50% / 0.7rem 0.7rem no-repeat,
+    radial-gradient(circle, #818cf8 45%, transparent 50%) 50% 50% / 0.7rem 0.7rem no-repeat,
+    radial-gradient(circle, #c084fc 45%, transparent 50%) calc(50% + 1.35rem) 50% / 0.7rem 0.7rem no-repeat;
+  filter: drop-shadow(0 0.35rem 0.3rem rgb(99 102 241 / 25%));
+  animation: loading-wave 1.2s ease-in-out infinite;
+}
+
+@keyframes loading-wave {
+  0%, 60%, 100% {
+    background-position:
+      calc(50% - 1.35rem) 50%,
+      50% 50%,
+      calc(50% + 1.35rem) 50%;
+  }
+
+  15% {
+    background-position:
+      calc(50% - 1.35rem) calc(50% - 0.55rem),
+      50% 50%,
+      calc(50% + 1.35rem) 50%;
+  }
+
+  30% {
+    background-position:
+      calc(50% - 1.35rem) 50%,
+      50% calc(50% - 0.55rem),
+      calc(50% + 1.35rem) 50%;
+  }
+
+  45% {
+    background-position:
+      calc(50% - 1.35rem) 50%,
+      50% 50%,
+      calc(50% + 1.35rem) calc(50% - 0.55rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #welcomeMessage:empty::before {
+    animation: none;
+  }
+}
